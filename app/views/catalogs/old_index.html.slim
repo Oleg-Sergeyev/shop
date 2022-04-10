@@ -1,0 +1,29 @@
+div id = 'table_view' class = 'mb-3' style ='margin: 10px;'
+  p КАТАЛОГ
+  table.table.table-striped class ='table table-striped' style ='margin: 5px;'
+    thead
+      tr
+        th id
+        th Родитель
+        th Название
+        th Тип
+        th Изменить
+        th Удалить
+    tbody
+      - @catalogs.order(name: :asc).each do |element|
+        tr
+          td = element.id
+          td = element.parent_id
+          td = element.name
+          td = element.element_type
+          td = link_to 'edit', edit_catalog_path(element)
+          td = link_to 'destroy', element, data: { confirm: 'Are you sure?' }, method: :delete
+
+= select_tag 'parent_id', options_for_select(nested_set_options(Catalog) {|i| "#{'-' * i.level} #{i.name}" } )
+= nested_set_options(Catalog) {|i| "#{'-' * i.level} #{i.name}" }
+- if @catalogs
+  p
+    strong Comments:
+    - Catalog.order(:depth, :lft).each_with_level(@catalogs) do |element, level|
+      p(style="padding-left:#{level * 20}px")
+        = "#{level} -- #{element.name}"

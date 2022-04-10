@@ -1,0 +1,12 @@
+- catalogs.each do |item|
+  .catalog-container
+    - if item.root?
+      = item.name
+    - else  
+      .catalog-name
+        - if !@array.include?(item.id)
+          = "#{item.name} - (#{item.id})"
+          = link_to ' delete', catalog_path(item), method: :delete, data: {confirm: "Удалить #{item.name} ? Вы уверены?"}
+          - @array.push(item.id)
+    - if !item.leaf?
+      = render "catalogs/nested_fields", catalogs: item.children
