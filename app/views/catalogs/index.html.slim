@@ -1,21 +1,9 @@
-h2 Каталог 
+h2 Каталог
+p
+= link_to 'Создать папку', new_catalog_path, action: :new
+= link_to 'Создать товар', new_product_path, action: :new
+p
 - @array = []
 - @catalogs.order(:depth, :lft).each do |element|
+  - element.children.except(:order).order(:name) if !element.leaf?
   = render "nested_fields", catalogs: [element]
-div id = 'new_catalog' class = 'mb-3' style ='border: 1px dashed #0d6efd; padding: 10px;'
-  h4 Добавить элемент каталога
-  .warning
-    = flash[:notice]  
-  = form_for :catalog do |f|
-    .field
-      = f.label 'Родительский элемент', class: 'form-label'
-      /= f.select(:parent_id, Catalog.all.collect {|a| [a.name, a.id]}, include_blank: true)
-      = f.select(:parent_id, nested_set_options(Catalog) {|i| "#{'-' * i.level} #{i.name}"}, include_blank: true)
-    .field
-      = f.label 'Наименование', class: 'form-label'
-      = f.text_field :name, class: 'form-control form-control-sm'
-    .field
-      = f.label 'Тип', class: 'form-label'
-      = f.select :select_type, options_for_select([['poduct', 0 ], ['service', 10]])
-    .actions 
-      = f.submit 'Сохранить', class: 'btn btn-primary mb', id:'save_new_event_btn'

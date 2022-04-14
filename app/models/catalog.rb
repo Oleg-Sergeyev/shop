@@ -1,16 +1,18 @@
 class Catalog < ApplicationRecord
   attr_accessor :select_type
 
-  acts_as_nested_set
+  acts_as_nested_set order_column: :name
+
+  has_many :products, dependent: :destroy
+  accepts_nested_attributes_for :products #, reject_if: :all_blank
 
   before_validation :normalize_numbers, on: :create
+
   # before_save :check_siblings
 
   validates :name, presence: true
   validates :element_type, presence: true
   validates :name, length: { maximum: 500, minimum: 2 }
-
-  has_many :products, dependent: :destroy
 
   enum element_type: {
     product: 0,
@@ -20,6 +22,8 @@ class Catalog < ApplicationRecord
   private
 
   def normalize_numbers
+    Rails.logger.info "SELF => #{self} **************  type => #{select_type}"
+    #select_type.to_i
     self.element_type = Kernel.Integer(select_type)
   end
 

@@ -1,0 +1,24 @@
+  div id = 'new_product' class = 'mb-3' style ='border: 1px dashed #0d6efd; padding: 10px;'
+    h4 Изменить товар
+    = form_for @product do |f|
+      .field
+        = f.label 'Родительская папка', class: 'form-label'
+        = f.select(:catalog_id, nested_set_options(Catalog) {|j| "#{'-' * j.level} #{j.name}"}, include_blank: true)
+      .field
+        = f.label 'Артикул', class: 'form-label'
+        = f.text_field :article, class: 'form-control form-control-sm'
+      .field
+        = f.label 'Производитель', class: 'form-label'
+        = f.text_field :brand, class: 'form-control form-control-sm'
+      .field
+        = f.label 'Наименование товара', class: 'form-label'
+        = f.text_field :name, class: 'form-control form-control-sm'
+      .field
+        = f.label 'Параметры', class: 'form-label'
+        = f.text_field :specification, class: 'form-control form-control-sm'    
+      .field
+        = f.label 'price', class: 'form-label'
+        = f.number_field :price, step: :any
+        /= p.text_field :price, class: 'form-control form-control-sm'    
+      .actions 
+        = f.submit 'Сохранить', class: 'btn btn-primary mb'

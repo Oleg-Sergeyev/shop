@@ -1,0 +1,9 @@
+div id = 'new_product' class = 'mb-3' style ='border: 1px dashed #0d6efd; padding: 10px;'
+  h4 Изменить товар
+  = render 'form', product: @product
+
+/= link_to 'Show', @product
+p
+= link_to 'Back', catalogs_path
+p
+= link_to 'Delete', product_path(@product), method: :delete, data: {confirm: "Удалить #{@product.name} ? Вы уверены?"}

@@ -1,12 +1,19 @@
 - catalogs.each do |item|
   .catalog-container
     - if item.root?
-      = item.name
+      = link_to item.name, edit_catalog_path(item)
     - else  
       .catalog-name
         - if !@array.include?(item.id)
-          = "#{item.name} - (#{item.id})"
-          = link_to ' delete', catalog_path(item), method: :delete, data: {confirm: "Удалить #{item.name} ? Вы уверены?"}
+          = link_to item.name, edit_catalog_path(item)
+          /= link_to ' delete', catalog_path(item), method: :delete, data: {confirm: "Удалить #{item.name} ? Вы уверены?"}
           - @array.push(item.id)
-    - if !item.leaf?
+    - if item.leaf?
+      - Product.where(catalog_id: item.id).each do |product|
+          .catalog-name style='margin-left: 20px;'
+            = link_to product.name, edit_product_path(product)
+            - item = nil
+            /= link_to ' delete', product_path(product), method: :delete, data: {confirm: "Удалить #{item.name} ? Вы уверены?"}
+    - else
       = render "catalogs/nested_fields", catalogs: item.children
+      

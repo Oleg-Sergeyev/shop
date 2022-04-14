@@ -3,7 +3,7 @@ class CatalogsController < ApplicationController
 
   # GET /catalogs or /catalogs.json
   def index
-    @catalogs = Catalog.all
+    @catalogs = Catalog.includes(:products)
   end
 
   # GET /catalogs/1 or /catalogs/1.json
@@ -22,11 +22,12 @@ class CatalogsController < ApplicationController
   # POST /catalogs or /catalogs.json
   def create
     @catalog = Catalog.new(catalog_params)
-    return if check_siblings(Catalog.find(@catalog.parent_id), @catalog.name)
+    return if check_siblings(@catalog.parent_id, @catalog.name)
 
+    #@catalog.children.build
     respond_to do |format|
       if @catalog.save
-        format.html { redirect_to catalog_url(@catalog), notice: "Catalog was successfully created." }
+        format.html { redirect_to catalogs_path, notice: "Catalog was successfully created." }
         format.json { render :show, status: :created, location: @catalog }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -39,6 +40,7 @@ class CatalogsController < ApplicationController
   def update
     respond_to do |format|
       if @catalog.update(catalog_params)
+        #@catalog.children.build
         format.html { redirect_to catalog_url(@catalog), notice: "Catalog was successfully updated." }
         format.json { render :show, status: :ok, location: @catalog }
       else
@@ -58,15 +60,30 @@ class CatalogsController < ApplicationController
     end
   end
 
-  private
-
-  def check_siblings(parent, name)
-    if parent.children.map(&:name).include?(name)
-      redirect_to catalogs_path, notice: 'В одном разделе каталога допускаются только уникальные наименования!'
-      return true
+  def check_siblings(parent_id, name)
+    if parent_id
+      # if name.nil?
+      Rails.logger.info "*********************** #{catalog_params} **********************"
+      #   #@catalog = Catalog.find(parent_id)
+      #   #@catalog.children.build
+      #   @product = Product.new(params[:product])
+      #   @product.save
+      #   return true
+      # end
+      if Catalog.find(parent_id).children.map(&:name).include?(name) && name
+        redirect_to catalogs_path, notice: 'В одном разделе каталога допускаются только уникальные наименования!'
+        return true
+      end
+    else
+      if Catalog.where(depth: 0).map(&:name).include?(name)
+        redirect_to catalogs_path, notice: 'В одном разделе каталога допускаются только уникальные наименования!'
+        return true
+      end
     end
     false
   end
+
+  private
 
    # Use callbacks to share common setup or constraints between actions.
   def set_catalog
@@ -78,3 +95,5 @@ class CatalogsController < ApplicationController
     params.require(:catalog).permit(:parent_id, :name, :element_type, :will_remove, :select_type)
   end
 end
+
+# product_attributes: [:catalog_id, :name, :price, :article, :specification, :brand]

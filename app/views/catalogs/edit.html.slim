@@ -1,9 +1,9 @@
-h1 Editing Catalog
+h3 Изменить папку
 
 = render 'form', catalog: @catalog
 
-= link_to 'Show', @catalog
+/= link_to 'Show', @catalog
 p
 = link_to 'Back', catalogs_path
 p
-= link_to 'Delete', catalog_path(@catalog), method: :delete
+= link_to 'Delete', catalog_path(@catalog), method: :delete, data: {confirm: "Удалить #{@catalog.name} ? Вы уверены?"}
