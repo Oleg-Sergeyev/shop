@@ -4,6 +4,7 @@ p
 = link_to 'Создать товар', new_product_path, action: :new
 p
 - @array = []
+- @array_product = []
 - @catalogs.order(:depth, :lft).each do |element|
   - element.children.except(:order).order(:name) if !element.leaf?
   = render "nested_fields", catalogs: [element]
