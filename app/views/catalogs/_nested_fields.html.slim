@@ -2,7 +2,8 @@
   - if item.root?
     .catalog-folder
       = link_to item.name, edit_catalog_path(item), class: 'folder-link'
-      - Product.where(catalog_id: item.id).order(name: :asc).each do |product|
+      /- Product.where(catalog_id: item.id).order(name: :asc).each do |product|
+      - item.products.each do |product|
         .catalog-product-root style="margin-left: #{item.level + 1}0px;"
           = link_to "#{product.name} - #{product.price} руб.", edit_product_path(product), class: 'product-link', title: "#{product.specification}"
   - else  
@@ -12,7 +13,8 @@
         /= link_to ' delete', catalog_path(item), method: :delete, data: {confirm: "Удалить #{item.name} ? Вы уверены?"}
         - @array.push(item.id)
   - if item.leaf?
-    - Product.where(catalog_id: item.id).order(name: :asc).each do |product|
+    /- Product.where(catalog_id: item.id).order(name: :asc).each do |product|
+    - item.products.each do |product|
       - if !@array_product.include?(product.id)
         .catalog-product
           = link_to "#{product.name} - #{product.price} руб.", edit_product_path(product), class: 'product-link', title: "#{product.specification}"
