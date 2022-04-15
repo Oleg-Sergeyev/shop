@@ -3,6 +3,7 @@ p
 = link_to 'Создать папку', new_catalog_path, action: :new, class: 'catalog-button-link'
 = link_to 'Создать товар', new_product_path, action: :new, class: 'catalog-button-link'
 p
+- @root_product = nil
 - @array = []
 - @array_product = []
 - @catalogs.each do |catalog|

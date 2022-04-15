@@ -1,7 +1,7 @@
 class Catalog < ApplicationRecord
   attr_accessor :select_type
 
-  acts_as_nested_set order_column: :name
+  acts_as_nested_set #order_column: :name
 
   has_many :products, dependent: :destroy
   accepts_nested_attributes_for :products #, reject_if: :all_blank

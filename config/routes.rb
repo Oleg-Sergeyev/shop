@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  #root 'home#index'
+  root 'catalogs#index'
   resources :catalogs
   resources :products
   resources :catalogs do

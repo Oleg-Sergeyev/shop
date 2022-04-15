@@ -11,7 +11,7 @@ div id = 'new_catalog' class = 'mb-3' style ='border: 1px dashed #0d6efd; paddin
     .field
       = f.label 'Родительский элемент', class: 'form-label'
       /= f.select(:parent_id, Catalog.all.collect {|a| [a.name, a.id]}, include_blank: true)
-      = f.select(:parent_id, nested_set_options(Catalog) {|i| "#{'-' * i.level} #{i.name}"}, include_blank: true)
+      = f.select :parent_id, nested_set_options(Catalog.except(:order).order(:name)) {|i| "#{'-' * i.level} #{i.name}"}, include_blank: true
       /= f.select :parent_id, options_for_select(nested_set_options(@catalogs) {|i| "#{'–' * i.level} #{i.name}" }, include_blank: true)
     .field
       = f.label 'Наименование папки', class: 'form-label'

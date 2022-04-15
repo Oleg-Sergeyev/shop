@@ -5,17 +5,6 @@ class CatalogsController < ApplicationController
   def index
     #@catalogs = Catalog.includes(:products)#.order(:lft)
     @catalogs = Catalog.includes(:products).where(depth: 0).order(name: :asc).order(:lft)
-    #@catalogs = Catalog.root.self_and_descendants.order(:lft)
-    #sort(@catalogs)
-  end
-
-  def sort(catalogs)
-    # catalogs.where(depth: 0).order(name: :asc).each do |element|
-    #   Rails.logger.info "ROOT -> #{element.name}"
-    # end
-    # Catalog.order(:lft).each_with_level(catalogs) do |element, level|
-    #   puts "ELEMENT  #{element.name} LFT #{element.lft} RGT #{element.rgt} LEVEL  #{level}"
-    # end 
   end
 
   # GET /catalogs/1 or /catalogs/1.json

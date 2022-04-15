@@ -1,25 +1,30 @@
 - catalogs.each do |item|
   - if item.root?
     .catalog-folder
-      = link_to item.name, edit_catalog_path(item), class: 'folder-link'
-      /- Product.where(catalog_id: item.id).order(name: :asc).each do |product|
-      - item.products.each do |product|
-        .catalog-product-root style="margin-left: #{item.level + 1}0px;"
-          = link_to "#{product.name} - #{product.price} руб.", edit_product_path(product), class: 'product-link', title: "#{product.specification}"
+      = link_to "- #{item.name}", edit_catalog_path(item), class: 'folder-link'
+      - if item.root? && item.descendants
+        - @root_product = item
+        = render "catalogs/nested_fields", catalogs: item.children.except(:order).order(:name)
+      - if item.products
+        = render "catalogs/products_list", products: @root_product.products.order(name: :asc)
+        - @root_product = nil
   - else  
     .catalog-folder style="margin-left: #{item.level}0px;"
       - if !@array.include?(item.id)
-        = link_to item.name, edit_catalog_path(item), class: 'folder-link'
+        = link_to "- #{item.name}", edit_catalog_path(item), class: 'folder-link'
         /= link_to ' delete', catalog_path(item), method: :delete, data: {confirm: "Удалить #{item.name} ? Вы уверены?"}
         - @array.push(item.id)
+        - if item.descendants
+          - @root_product = item
+          = render "catalogs/nested_fields", catalogs: item.children.except(:order).order(:name)
+        - elsif item.products
+          = render "catalogs/products_list", products: @root_product.products.order(name: :asc)
+          - @root_product = nil
+        - if item.products
+          = render "catalogs/products_list", products: item.products.order(name: :asc)
   - if item.leaf?
-    /- Product.where(catalog_id: item.id).order(name: :asc).each do |product|
-    - item.products.each do |product|
-      - if !@array_product.include?(product.id)
-        .catalog-product
-          = link_to "#{product.name} - #{product.price} руб.", edit_product_path(product), class: 'product-link', title: "#{product.specification}"
-          - @array_product.push(product.id)
+    = render "catalogs/products_list", products: item.products
           /= link_to ' delete', product_path(product), method: :delete, data: {confirm: "Удалить #{item.name} ? Вы уверены?"}
   - else
-    = render "catalogs/nested_fields", catalogs: item.children
+    = render "catalogs/nested_fields", catalogs: item.children.except(:order).order(:name)
       
