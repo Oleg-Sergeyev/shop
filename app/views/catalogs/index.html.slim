@@ -1,10 +1,12 @@
 h2 Каталог
 p
-= link_to 'Создать папку', new_catalog_path, action: :new
-= link_to 'Создать товар', new_product_path, action: :new
+= link_to 'Создать папку', new_catalog_path, action: :new, class: 'catalog-button-link'
+= link_to 'Создать товар', new_product_path, action: :new, class: 'catalog-button-link'
 p
 - @array = []
 - @array_product = []
-- @catalogs.order(:depth, :lft).each do |element|
-  - element.children.except(:order).order(:name) if !element.leaf?
+- @catalogs.each do |catalog|
+  = render "nested_fields", catalogs: [catalog]     
+/- @catalogs.order(:lft).each do |element|
+  /- element.children.except(:order).order(:name) if !element.leaf?
   = render "nested_fields", catalogs: [element]

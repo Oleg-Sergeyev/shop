@@ -1,4 +1,6 @@
-.catalog-folder
+.body{
+  font-family: "Roboto";
+}
 
 .folder-link{
   background-color: #eeee98;
@@ -20,6 +22,17 @@
   font-weight: bold;
   color: #994b4f;  
 }
+.product-link:hover { text-decoration: none; color: #ff0000 }
+
+.catalog-button-link{
+  color: white;
+  padding: 8px;
+  background-color: black;
+  margin: 3px;
+  border-radius: 5px;
+}
+.catalog-button-link:hover { text-decoration: none; color: #dcff17 }
+
 .catalog-product{
   margin-left: 20px;
   color: gray;
@@ -33,10 +46,10 @@
   color:red;
 }
 
-a:link { text-decoration: none; color: #3c1a1a}
+a:link { text-decoration: none; }
 
-a:visited { text-decoration: none; color: #3c1a1a}
+a:visited { text-decoration: none; }
 
-a:hover { text-decoration: none; color: #ff0000 }
+// a:hover { text-decoration: none; color: #ff0000 }
 
-a:active { text-decoration: none; color: #3c1a1a }
+a:active { text-decoration: none;  }
