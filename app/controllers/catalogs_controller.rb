@@ -46,7 +46,7 @@ class CatalogsController < ApplicationController
   def update
     respond_to do |format|
       if @catalog.update(catalog_params)
-        format.html { redirect_to catalog_url(@catalog), notice: 'Catalog was successfully updated.' }
+        format.html { redirect_to catalogs_path, notice: 'Catalog was successfully updated.' }
         format.json { render :show, status: :ok, location: @catalog }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -57,10 +57,14 @@ class CatalogsController < ApplicationController
 
   # DELETE /catalogs/1 or /catalogs/1.json
   def destroy
+    @catalog.self_and_descendants.each do |item|
+      Product.delete_by(catalog_id: item.id)
+    end
     @catalog.destroy
-
+    Rails.cache.clear
+    Catalog.rebuild!
     respond_to do |format|
-      format.html { redirect_to catalogs_url, notice: 'Catalog was successfully destroyed.' }
+      format.html { redirect_to catalogs_path, notice: 'Catalog was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
