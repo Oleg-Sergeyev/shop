@@ -1,13 +1,17 @@
-h2 Каталог
-p
-= link_to 'Создать папку', new_catalog_path, action: :new, class: 'catalog-button-link'
-= link_to 'Создать товар', new_product_path, action: :new, class: 'catalog-button-link'
-p
-- @root_product = nil
-- @array = []
-- @array_product = []
-- @catalogs.each do |catalog|
-  = render "nested_fields", catalogs: [catalog]     
-/- @catalogs.order(:lft).each do |element|
-  /- element.children.except(:order).order(:name) if !element.leaf?
-  = render "nested_fields", catalogs: [element]
+.container-fluid
+  h2 Каталог
+  p
+  .actions
+    = link_to 'Создать раздел', new_catalog_path, action: :new, class: 'catalog-button-link'
+    = link_to 'Создать товар', new_product_path, action: :new, class: 'catalog-button-link'
+    = form_tag catalogs_path, method: :post, class: 'catalog-buttons-form'
+      = link_to 'А-Я', catalogs_path(sort: :asc), class: 'catalog-button-link'
+      = link_to 'Я-А', catalogs_path(sort: :desc), class: 'catalog-button-link'
+  p
+  - @root_product = nil
+  - @array = []
+  - @array_product = []
+  - @catalogs.each do |catalog|
+    - cache catalog do
+      = render "nested_fields", catalogs: [catalog], cached: true     
+

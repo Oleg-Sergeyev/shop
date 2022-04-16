@@ -9,6 +9,7 @@ class Catalog < ApplicationRecord
   before_validation :normalize_numbers, on: :create
 
   # before_save :check_siblings
+  before_save :clear_cache
 
   validates :name, presence: true
   validates :element_type, presence: true
@@ -21,9 +22,11 @@ class Catalog < ApplicationRecord
 
   private
 
+  def clear_cache
+    Rails.cache.clear
+  end
+
   def normalize_numbers
-    Rails.logger.info "SELF => #{self} **************  type => #{select_type}"
-    #select_type.to_i
     self.element_type = Kernel.Integer(select_type)
   end
 

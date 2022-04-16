@@ -2,4 +2,5 @@
   - if !@array_product.include?(product.id)
     .catalog-product
       = link_to "#{product.name} - #{product.price} руб.", edit_product_path(product), class: 'product-link', title: "#{product.specification}"
+      = link_to ' Удалить', product_path(product), method: :delete, data: {confirm: "Удалить #{product.name} ? Вы уверены?"}, class: 'delete-link'
       - @array_product.push(product.id)   

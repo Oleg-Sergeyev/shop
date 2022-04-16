@@ -1,30 +1,36 @@
 - catalogs.each do |item|
   - if item.root?
     .catalog-folder
-      = link_to "- #{item.name}", edit_catalog_path(item), class: 'folder-link'
+      = link_to "#{item.leaf? || !item.products ? '' : '- '} #{item.name}", edit_catalog_path(item), class: 'folder-link'
+      = form_tag catalogs_path, method: :post, class: 'catalog-buttons-form'
+        = link_to 'Создать подраздел', new_catalog_path(catalog_id: item.id), class: 'delete-link'
+        = link_to 'Создать товар', new_product_path(catalog_id: item.id), class: 'delete-link'
+      = link_to ' Удалить', catalog_path(item), method: :delete, data: {confirm: "Удалить #{item.name} ? Вы уверены?"}, class: 'delete-link'
       - if item.root? && item.descendants
         - @root_product = item
-        = render "catalogs/nested_fields", catalogs: item.children.except(:order).order(:name)
+        = render "catalogs/nested_fields", catalogs: item.children.except(:order).order(:name), cached: true
       - if item.products
-        = render "catalogs/products_list", products: @root_product.products.order(name: :asc)
+        = render "catalogs/products_list", products: @root_product.products.order(name: params[:sort]), cached: true
         - @root_product = nil
   - else  
-    .catalog-folder style="margin-left: #{item.level}0px;"
+    .catalog-folder
       - if !@array.include?(item.id)
-        = link_to "- #{item.name}", edit_catalog_path(item), class: 'folder-link'
-        /= link_to ' delete', catalog_path(item), method: :delete, data: {confirm: "Удалить #{item.name} ? Вы уверены?"}
+        = link_to "#{item.products.count.positive? || !item.leaf? ? '- ' : ''} #{item.name}", edit_catalog_path(item), class: 'folder-link'
+        = form_tag catalogs_path, method: :post, class: 'catalog-buttons-form'
+          = link_to 'Создать подраздел', new_catalog_path(catalog_id: item.id), class: 'delete-link'
+          = link_to 'Создать товар', new_product_path(catalog_id: item.id), class: 'delete-link'
+        = link_to ' Удалить', catalog_path(item), method: :delete, data: {confirm: "Удалить #{item.name} ? Вы уверены?"}, class: 'delete-link'
         - @array.push(item.id)
         - if item.descendants
           - @root_product = item
-          = render "catalogs/nested_fields", catalogs: item.children.except(:order).order(:name)
+          = render "catalogs/nested_fields", catalogs: item.children.except(:order).order(:name), cached: true
         - elsif item.products
-          = render "catalogs/products_list", products: @root_product.products.order(name: :asc)
+          = render "catalogs/products_list", products: @root_product.products.order(name: params[:sort]), cached: true
           - @root_product = nil
         - if item.products
-          = render "catalogs/products_list", products: item.products.order(name: :asc)
-  - if item.leaf?
-    = render "catalogs/products_list", products: item.products
-          /= link_to ' delete', product_path(product), method: :delete, data: {confirm: "Удалить #{item.name} ? Вы уверены?"}
-  - else
-    = render "catalogs/nested_fields", catalogs: item.children.except(:order).order(:name)
+          = render "catalogs/products_list", products: item.products.order(name: params[:sort]), cached: true
+  / - if item.leaf?
+  /   = render "catalogs/products_list", products: item.products
+  / - else
+  /   = render "catalogs/nested_fields", catalogs: item.children.except(:order).order(:name), cached: true
       

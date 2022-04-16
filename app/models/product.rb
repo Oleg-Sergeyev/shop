@@ -2,6 +2,8 @@ class Product < ApplicationRecord
   #before_save :convert_price
   #attr_accessor :price_field
 
+  before_save :clear_cache
+
   validates :name, presence: true
   validates :article, length: { maximum: 150, minimum: 2 }
   validates :name, length: { maximum: 800, minimum: 5 }
@@ -9,6 +11,9 @@ class Product < ApplicationRecord
 
   belongs_to :catalog, touch: true
 
+  def clear_cache
+    Rails.cache.clear
+  end
   # def convert_price
   #   return unless price_field
 

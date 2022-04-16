@@ -8,7 +8,10 @@
               li = message
       .field
         = f.label "Родительская папка", class: 'form-label'
-        = f.select(:catalog_id, nested_set_options(Catalog) {|j| "#{'-' * j.level} #{j.name}"}, include_blank: true)
+        - if params[:catalog_id]
+          = f.select :catalog_id, options_for_select([[Catalog.find_by(id: params[:catalog_id]).name, params[:catalog_id]]])
+        - else
+          = f.select(:catalog_id, nested_set_options(Catalog.except(:order).order(:name)) {|j| "#{'-' * j.level} #{j.name}"}, include_blank: true)
       .field
         = f.label 'Артикул', class: 'form-label'
         = f.text_field :article, class: 'form-control form-control-sm'

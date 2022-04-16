@@ -31,9 +31,25 @@
   margin: 3px;
   border-radius: 5px;
 }
+.delete-link{
+  background-color: #eeedec;
+  padding: 6px;
+  border-radius: 5px;
+  display: inline-flex;
+  margin: 2px;
+  color: #717171;
+  font-size: 0.75em;
+}
+
 .catalog-button-link:hover { text-decoration: none; color: #dcff17 }
 
+.catalog-folder{
+  border-left: 1px dashed #a6a6a6;
+  margin-left: 15px;
+}
+
 .catalog-product{
+  border-left: 1px dashed #a6a6a6;
   margin-left: 15px;
   color: gray;
 }
@@ -42,6 +58,15 @@
   margin-left: 20px;
   color: gray;
 }
+
+.catalog-buttons-form{
+  display: inline-flex;
+}
+
+.actions{
+  display: inline-flex;
+}
+
 .warning{
   color:red;
 }
