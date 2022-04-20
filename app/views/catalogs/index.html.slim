@@ -2,11 +2,11 @@
   h2 Каталог
   p
   .actions
-    = link_to 'Создать раздел', new_catalog_path, action: :new, class: 'catalog-button-link'
-    = link_to 'Создать товар', new_product_path, action: :new, class: 'catalog-button-link'
+    = link_to 'Создать раздел', new_catalog_path, action: :new, data: { turbolinks: false }, class: 'catalog-button-link', notice:''
+    = link_to 'Создать товар', new_product_path, action: :new, data: { turbolinks: false }, class: 'catalog-button-link', notice:''
     = form_tag catalogs_path, method: :post, class: 'catalog-buttons-form'
-      = link_to 'А-Я', catalogs_path(sort: :asc), class: 'catalog-button-link'
-      = link_to 'Я-А', catalogs_path(sort: :desc), class: 'catalog-button-link'
+      = link_to 'А-Я', catalogs_path(sort: :asc), data: { turbolinks: false }, class: 'catalog-button-link'
+      = link_to 'Я-А', catalogs_path(sort: :desc), data: { turbolinks: false }, class: 'catalog-button-link'
   p
   - @root_product = nil
   - @array = []

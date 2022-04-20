@@ -1,7 +1,7 @@
 class Catalog < ApplicationRecord
   attr_accessor :select_type
 
-  acts_as_nested_set before_remove: :do_before_remove_stuff #order_column: :name
+  acts_as_nested_set before_add: :do_before_add_stuff #order_column: :name
 
   has_many :products, dependent: :delete_all #dependent: :destroy
   accepts_nested_attributes_for :products #, reject_if: :all_blank
@@ -9,8 +9,7 @@ class Catalog < ApplicationRecord
   before_validation :normalize_numbers, on: :create
 
   # before_save :check_siblings
-  before_save :clear_cache
-  #before_destroy :do_before_remove_stuff
+  before_save :clear_cache #check_name_on_level
 
   validates :name, presence: true
   validates :element_type, presence: true
@@ -28,20 +27,8 @@ class Catalog < ApplicationRecord
   end
 
   def normalize_numbers
-    self.element_type = Kernel.Integer(select_type)
+    self.element_type = Integer(select_type)
   end
 
-  # def do_before_remove_stuff(node)
-  #   node.self_and_descendants.each do |item|
-  #     Products.delete_all(catalog_id: item.id)
-  #   end
-  # end
-
-  # def check_siblings
-  #   return unless siblings.count.positive?
-
-  #   #flash[:notice] = 'В одном разделе каталога допускаются только уникальные названия!'
-  #   flash[:notice] = self.errors.full_messages.to_sentence
-  #   raise ActiveRecord::Rollback
-  # end
+  scope :scope_sort, ->(sort) { includes(:products).where(depth: 0).order(name: sort).order(:lft) }
 end

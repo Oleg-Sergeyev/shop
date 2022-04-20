@@ -1,34 +1,34 @@
 - catalogs.each do |item|
   - if item.root?
     .catalog-folder
-      = link_to "#{item.leaf? || !item.products ? '' : '- '} #{item.name}", edit_catalog_path(item), class: 'folder-link'
+      = link_to "#{item.leaf? || !item.products ? '' : '- '} #{item.name}", edit_catalog_path(item), data: { turbolinks: false }, class: 'folder-link'
       = form_tag catalogs_path, method: :post, class: 'catalog-buttons-form'
-        = link_to 'Создать подраздел', new_catalog_path(catalog_id: item.id), class: 'delete-link'
-        = link_to 'Создать товар', new_product_path(catalog_id: item.id), class: 'delete-link'
-      = link_to ' Удалить', catalog_path(item), method: :delete, data: {confirm: "Удалить #{item.name} ? Вы уверены?"}, class: 'delete-link'
+        = link_to 'Создать подраздел', new_catalog_path(catalog_id: item.id), data: { turbolinks: false }, class: 'delete-link'
+        = link_to 'Создать товар', new_product_path(catalog_id: item.id), data: { turbolinks: false }, class: 'delete-link'
+      = link_to ' Удалить', catalog_path(item), method: :delete, data: {confirm: "Удалить #{item.name} ? Вы уверены?", turbolinks: false}, class: 'delete-link'
       - if item.root? && item.descendants
         - @root_product = item
         = render "catalogs/nested_fields", catalogs: item.children.except(:order).order(:name), cached: true
       - if item.products
-        = render "catalogs/products_list", products: @root_product.products.order(name: params[:sort]), cached: true
+        = render "catalogs/products_list", products: @root_product.products.order(name: cookies[:sort]), cached: true
         - @root_product = nil
   - else  
     .catalog-folder
       - if !@array.include?(item.id)
-        = link_to "#{item.products.count.positive? || !item.leaf? ? '- ' : ''} #{item.name}", edit_catalog_path(item), class: 'folder-link'
+        = link_to "#{item.products.count.positive? || !item.leaf? ? '- ' : ''} #{item.name}", edit_catalog_path(item), data: { turbolinks: false }, class: 'folder-link'
         = form_tag catalogs_path, method: :post, class: 'catalog-buttons-form'
-          = link_to 'Создать подраздел', new_catalog_path(catalog_id: item.id), class: 'delete-link'
-          = link_to 'Создать товар', new_product_path(catalog_id: item.id), class: 'delete-link'
-        = link_to ' Удалить', catalog_path(item), method: :delete, data: {confirm: "Удалить #{item.name} ? Вы уверены?"}, class: 'delete-link'
+          = link_to 'Создать подраздел', new_catalog_path(catalog_id: item.id), data: { turbolinks: false }, class: 'delete-link'
+          = link_to 'Создать товар', new_product_path(catalog_id: item.id), data: { turbolinks: false }, class: 'delete-link'
+        = link_to ' Удалить', catalog_path(item), method: :delete, data: {confirm: "Удалить #{item.name} ? Вы уверены?", turbolinks: false}, class: 'delete-link'
         - @array.push(item.id)
         - if item.descendants
           - @root_product = item
           = render "catalogs/nested_fields", catalogs: item.children.except(:order).order(:name), cached: true
         - elsif item.products
-          = render "catalogs/products_list", products: @root_product.products.order(name: params[:sort]), cached: true
+          = render "catalogs/products_list", products: @root_product.products.order(name: cookies[:sort]), cached: true
           - @root_product = nil
         - if item.products
-          = render "catalogs/products_list", products: item.products.order(name: params[:sort]), cached: true
+          = render "catalogs/products_list", products: item.products.order(name: cookies[:sort]), cached: true
   / - if item.leaf?
   /   = render "catalogs/products_list", products: item.products
   / - else

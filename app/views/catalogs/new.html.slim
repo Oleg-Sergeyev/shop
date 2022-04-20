@@ -1,8 +1,12 @@
 div class = 'mb-3' style ='margin-left: 15px;'
   div class = 'mb-3' style ='margin-left: 10px;'
-    h1 Новый раздел каталога
+  - if @catalog.errors.any?
+    #error_explanation
+      h2 = "#{pluralize(@catalog.errors.count, 'error')} prohibited this event from being saved:"
+      ul
+        - @catalog.errors.full_messages.each do |message|
+          li = message
+  = render 'form', head: "НОВЫЙ ЭЛЕМЕНТ КАТАЛОГА"
 
-  == render 'form'
-
-  div class = 'mb-3' style ='margin-left: 15px;'
-    = link_to 'Back', catalogs_path, class: 'btn btn-primary'
+  / div class = 'mb-3' style ='margin-left: 15px;'
+  /   = link_to 'Back', catalogs_path, class: 'btn btn-primary'

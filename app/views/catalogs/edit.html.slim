@@ -1,9 +1,13 @@
-h3 Изменить папку
-
-= render 'form', catalog: @catalog
+div class = 'mb-3' style ='margin-left: 15px;'
+  div class = 'mb-3' style ='margin-left: 10px;'
+  - if @catalog.errors.any?
+    #error_explanation
+      h2 = "#{pluralize(@catalog.errors.count, 'error')} prohibited this event from being saved:"
+      ul
+        - @catalog.errors.full_messages.each do |message|
+          li = message
+  = render 'form', catalog: @catalog, head: 'ИЗМЕНИТЬ ЭЛЕМЕНТ КАТАЛОГА'
 
 /= link_to 'Show', @catalog
-p
-= link_to 'Back', catalogs_path
-p
-= link_to 'Delete', catalog_path(@catalog), method: :delete, data: {confirm: "Удалить #{@catalog.name} ? Вы уверены?"}
+
+/= link_to 'Delete', catalog_path(@catalog), method: :delete, data: {confirm: "Удалить #{@catalog.name} ? Вы уверены?"}
