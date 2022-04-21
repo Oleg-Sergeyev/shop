@@ -1,0 +1,9 @@
+div id = 'new_import' class = 'mb-3' style ='margin: 10px; width: fit-content'
+  .warning
+    = flash[:notice]
+.actions
+  = form_tag uploads_path, multipart: true, method: :post
+    = label_tag 'Выбрать файл (csv-файл)'
+    = file_field_tag :import_cvs, accept: 'text/csv', multiple: true
+    = submit_tag "Импорт", data: { confirm: "Обновляем каталог?" }
+    

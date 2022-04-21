@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   root 'catalogs#index'
+  get "/uploads" => "uploads#index"
+  post "/uploads" => "uploads#create"
   resources :catalogs
   resources :products
   resources :catalogs do

@@ -1,7 +1,7 @@
 class Catalog < ApplicationRecord
   attr_accessor :select_type
 
-  acts_as_nested_set before_add: :do_before_add_stuff #order_column: :name
+  acts_as_nested_set #order_column: :name  before_add: :do_before_add_stuff 
 
   has_many :products, dependent: :delete_all #dependent: :destroy
   accepts_nested_attributes_for :products #, reject_if: :all_blank
@@ -9,7 +9,7 @@ class Catalog < ApplicationRecord
   before_validation :normalize_numbers, on: :create
 
   # before_save :check_siblings
-  before_save :clear_cache #check_name_on_level
+  after_commit :clear_cache #check_name_on_level
 
   validates :name, presence: true
   validates :element_type, presence: true

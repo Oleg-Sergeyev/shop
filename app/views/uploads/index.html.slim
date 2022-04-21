@@ -1,0 +1,24 @@
+h3 Импорт каталога
+== render "form"
+- if @array
+  - headers = @array.first.keys
+  table.table.table-striped style ='margin: 5px;'
+    tr
+      th = 'N'
+      th = headers[0]
+      th = headers[1]
+      th = headers[2]
+      th = headers[3]
+      th = headers[4]
+      th = headers[5]
+    tbody     
+      - if @array
+        - @array.each_with_index do |row, index|
+          tr
+            td = index + 1
+            td = "#{row['catalog_name']}"
+            td = "#{row['article']}"
+            td = "#{row['name']}"
+            td = "#{row['brand']}"
+            td = "#{row['specification']}"
+            td = "#{row['price']}"

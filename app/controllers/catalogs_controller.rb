@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CatalogsController < ApplicationController
-  before_action :set_catalog, only: %i[show edit update destroy]
+  before_action :set_catalog, only: %i[show edit update destroy upload]
 
   # GET /catalogs or /catalogs.json
   def index
@@ -70,7 +70,7 @@ class CatalogsController < ApplicationController
       format.json { head :no_content }
     end
   end
-
+  
   private
 
   def check_siblings?(parent_id, name)
@@ -93,6 +93,6 @@ class CatalogsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def catalog_params
-    params.require(:catalog).permit(:parent_id, :name, :element_type, :will_remove, :select_type, :sort)
+    params.require(:catalog).permit(:parent_id, :name, :element_type, :will_remove, :select_type, :sort, :import_cvs)
   end
 end
