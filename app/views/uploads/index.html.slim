@@ -1,7 +1,7 @@
 h3 Импорт каталога
 == render "form"
-- if @array
-  - headers = @array.first.keys
+- if @imported
+  - headers = @imported.first.keys
   table.table.table-striped style ='margin: 5px;'
     tr
       th = 'N'
@@ -11,9 +11,10 @@ h3 Импорт каталога
       th = headers[3]
       th = headers[4]
       th = headers[5]
+      th = 'action'
     tbody     
-      - if @array
-        - @array.each_with_index do |row, index|
+      - if @imported
+        - @imported.each_with_index do |row, index|
           tr
             td = index + 1
             td = "#{row['catalog_name']}"
@@ -22,3 +23,7 @@ h3 Импорт каталога
             td = "#{row['brand']}"
             td = "#{row['specification']}"
             td = "#{row['price']}"
+            /td = "#{@action_log}"
+            - @action_log.each do |array|
+              - if array.second == row['name']
+                td.log = "#{array.last}"

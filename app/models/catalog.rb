@@ -27,7 +27,7 @@ class Catalog < ApplicationRecord
   end
 
   def normalize_numbers
-    self.element_type = Integer(select_type)
+    self.element_type = Integer(select_type) if select_type
   end
 
   scope :scope_sort, ->(sort) { includes(:products).where(depth: 0).order(name: sort).order(:lft) }

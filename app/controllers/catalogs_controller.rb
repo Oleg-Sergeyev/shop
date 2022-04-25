@@ -34,6 +34,7 @@ class CatalogsController < ApplicationController
     respond_to do |format|
       if @catalog.save
         Rails.cache.clear
+        Catalog.rebuild!
         format.html { redirect_to catalogs_path, notice: 'Catalog was successfully created.' }
         format.json { render :show, status: :created, location: @catalog }
       else
@@ -48,6 +49,7 @@ class CatalogsController < ApplicationController
     respond_to do |format|
       if @catalog.update(catalog_params)
         Rails.cache.clear
+        Catalog.rebuild!
         format.html { redirect_to catalogs_path, notice: 'Catalog was successfully updated.' }
         format.json { render :show, status: :ok, location: @catalog }
       else
@@ -79,8 +81,8 @@ class CatalogsController < ApplicationController
     if parent_id && Catalog.find(parent_id).children.map(&:name).include?(name)
       redirect_to new_catalog_path(catalog_id: parent_id), notice: 'В разделе только уникальные наименования!'
       return true
-    elsif Catalog.where(depth: 0).map(&:name).include?(name)
-      redirect_to new_catalog_path(catalog_id: parent_id), notice: 'В разделе только уникальные наименования!'
+    elsif Catalog.where(depth: 0).map(&:name).include?(name) && parent_id.nil?
+      redirect_to new_catalog_path(catalog_id: parent_id), notice: 'В корневом разделе только уникальные наименования!'
       return true
     end
     false
