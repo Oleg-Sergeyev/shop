@@ -40,7 +40,7 @@ class UploadsController < ApplicationController
         hash.each do |key, val|
           next unless Catalog.find(key.to_i).name == catalog_name
 
-          if val.include?(array[:article].to_s)   # Обновление товаров в каталоге
+          if val.include?(array[:article].to_s)
             Product.find_by(catalog_id: key.to_i, article: array[:article])
                    .update(array.update(catalog_id: key.to_i))
             create_log_array(array, array[:id], 'updated')
@@ -58,19 +58,17 @@ class UploadsController < ApplicationController
 
   # Функция для создания нового каталога, если нет текущего
   def create_new_catalog(products_array)
-    create_catalog(products_array)
+    products_array.each do |hash|
+      create_catalog(hash, nil)
+    end
     Rails.cache.clear
     render :index
   end
 
   # Парсинг файла
   def parse_csv
-    array = []
     file_before = params[:import_cvs].read
-    CSV.parse(file_before.force_encoding('utf-8'), headers: true) do |row|
-      array.push(row.to_h)
-    end
-    array
+    CSV.parse(file_before.force_encoding('utf-8'), headers: true).map(&:to_h)
   end
 
   # Формируем хеш с добавление id-папки каталога, по умолчанию со значением nil
@@ -90,6 +88,7 @@ class UploadsController < ApplicationController
   end
 
   def create_catalog(array, catalog_name)
+    catalog_name = array[:catalog_name] if catalog_name.nil?
     catalog_hash = { name: catalog_name, element_type: 0 }
     catalog = Catalog.create! catalog_hash
     array.merge!(catalog_id: catalog.id)

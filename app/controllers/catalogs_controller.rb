@@ -72,7 +72,7 @@ class CatalogsController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
+
   private
 
   def check_siblings?(parent_id, name)
