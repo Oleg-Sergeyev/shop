@@ -29,34 +29,48 @@ class UploadsController < ApplicationController
     render :index
   end
 
+  # Поиск по имени папки в текущем каталоге. Формирование хеша вида id=>{["7647", "73467"], и т.д.},
+  # где "key" - id папки, "value" - массив артикулов "записанный/закрепленный" за этой папкой.
   def update_existing_catalog(products_array)
-    products_array.each do |array|
-      catalog_name = array[:catalog_name]
-      array.delete(:catalog_name)
+    products_array.each do |product|
+      catalog_name = product[:catalog_name] # Но сохраняем в переменной, т.к. понадобится для поиска
+      product.delete(:catalog_name) # В модели продукта такого поля нет, удаляем.
       hash = Catalog.where(name: catalog_name).includes(:products)
                     .pluck(:id, :article).group_by { |a| a[0] }
-                    .map { |key, val| [key, val.map(&:last)] }.to_h
-      if hash.count.positive?
-        hash.each do |key, val|
-          next unless Catalog.find(key.to_i).name == catalog_name
-
-          if val.include?(array[:article].to_s)
-            Product.find_by(catalog_id: key.to_i, article: array[:article])
-                   .update(array.update(catalog_id: key.to_i))
-            create_log_array(array, array[:id], 'updated')
-            next
-          end
-          array.update(catalog_id: key.to_i)
-          product_create = Product.create! array
-          create_log_array(array, product_create.id, 'created')
-        end
-      else
-        create_catalog(array, catalog_name)
-      end
+                    .map { |key, val| [key, val.map(&:last)] }
+      hash.count.zero? ? create_catalog(product, catalog_name) : create_update(hash, product, catalog_name)
     end
   end
 
-  # Функция для создания нового каталога, если нет текущего
+  # Сравнение результатов поиска с текущим товаром product
+  # Бежим по результатм поиска, получаем имя папки, если не совпадает с именем товара, "берем" следующую папку
+  def create_update(search, product, catalog_name)
+    search.each do |key, val|
+      next unless Catalog.find(key.to_i).name == catalog_name
+
+      if val.include?(product[:article].to_s) # Если артикул есть, обновляем продукт, "берем" следующую папку
+        update_product(product, key.to_i)
+        next
+      end
+      create_product(product, key.to_i) # Создаем/прописываем в папке новый товар, если сюда дошли
+    end
+  end
+
+  # Обновление продукта в нужной, существующей папки
+  def update_product(product, key)
+    Product.find_by(catalog_id: key, article: product[:article])
+           .update(product.update(catalog_id: key))
+    create_log_array(product, product[:id], 'updated')
+  end
+
+  # Создание продукта в нужной, существующей папки
+  def create_product(product, key)
+    product.update(catalog_id: key)
+    product_create = Product.create! product
+    create_log_array(product, product_create.id, 'created')
+  end
+
+  # Функция для создания нового каталога, если нет текущего, рендер индексной страницы
   def create_new_catalog(products_array)
     products_array.each do |hash|
       create_catalog(hash, nil)
@@ -87,15 +101,17 @@ class UploadsController < ApplicationController
     array.map { |hash| create_hash(hash, nil) }
   end
 
-  def create_catalog(array, catalog_name)
-    catalog_name = array[:catalog_name] if catalog_name.nil?
+  # Создание папки каталога и привязывание товара к созданой папке
+  def create_catalog(product, catalog_name)
+    catalog_name = product[:catalog_name] if catalog_name.nil?
     catalog_hash = { name: catalog_name, element_type: 0 }
     catalog = Catalog.create! catalog_hash
-    array.merge!(catalog_id: catalog.id)
-    product_create = Product.create! array
-    create_log_array(array, product_create.id, 'created')
+    product.merge!(catalog_id: catalog.id).delete(:catalog_name)
+    product_create = Product.create! product
+    create_log_array(product, product_create.id, 'created')
   end
 
+  # Массив для вывода статуса(создан/обновлен) товара в html
   def create_log_array(hash, id, status)
     @action_log.push([id, hash, status])
   end
