@@ -6,5 +6,5 @@ div id = 'new_import' class = 'mb-3' style ='margin: 10px; width: fit-content'
     = label_tag 'Выбрать файл (csv-файл)'
     = file_field_tag :import_cvs, accept: 'text/csv', multiple: true
     = submit_tag "Импорт", data: { confirm: "Обновляем каталог?" }
-    = link_to 'Отмена', catalogs_path, class: 'catalog-button-link', notice:''
+    = link_to 'Вернуться', catalogs_path, class: 'catalog-button-link', notice:''
     

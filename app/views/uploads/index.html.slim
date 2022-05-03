@@ -1,29 +1,37 @@
 h3 Импорт каталога
 == render "form"
-- if @imported
-  - headers = @imported.first.keys
+- if @action_log
   table.table.table-striped style ='margin: 5px;'
     tr
       th = 'N'
-      th = headers[0]
-      th = headers[1]
-      th = headers[2]
-      th = headers[3]
-      th = headers[4]
-      th = headers[5]
+      th = :id
+      th = :catalog_name
+      th = :name
+      th = :brand
+      th = :article
+      th = :specification
+      th = :price
+      th = :catalog_id
       th = 'action'
     tbody     
-      - if @imported
-        - @imported.each_with_index do |row, index|
+      - if @action_log
+        /- @action_log.sort_by { |k| k[:name] }.each_with_index do |row, index|
+        - @action_log.each_with_index do |row, index|
           tr
             td = index + 1
-            td = "#{row['catalog_name']}"
-            td = "#{row['article']}"
-            td = "#{row['name']}"
-            td = "#{row['brand']}"
-            td = "#{row['specification']}"
-            td = "#{row['price']}"
+            td = row.first
+            - path = Catalog.find(row.second[:catalog_id]).self_and_ancestors.map do |element|
+              - element =+ "#{element.name}"            
+            td = path.join('/')
+            td = row.second[:name]
+            td = row.second[:brand]            
+            td = row.second[:article]
+            td = row.second[:specification]
+            td = row.second[:price]
+            td = row.second[:catalog_id]
+            td = row.third
             /td = "#{@action_log}"
-            - @action_log.each do |array|
+            /- @action_log.reduce(0) do |memo, array|
               - if array.second == row['name']
-                td.log = "#{array.last}"
+                - memo += 1 
+            /td.log = "#{array.last}"
